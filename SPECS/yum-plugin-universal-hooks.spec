@@ -24,10 +24,15 @@ Provides: dnf-plugin-universal-hooks
 
 %define yum_pluginslib  /usr/lib/yum-plugins
 
-
 %if 0%{?rhel} == 9
 %define dnf_pluginslib  /usr/lib/python3.9/site-packages/dnf-plugins/
-%else
+%endif
+
+%if 0%{?rhel} >= 10
+%define dnf_pluginslib  /usr/lib/python3.12/site-packages/dnf-plugins/
+%endif
+
+%if 0%{?rhel} < 9
 %define dnf_pluginslib  /usr/lib/python3.6/site-packages/dnf-plugins/
 %endif
 
@@ -35,7 +40,10 @@ Provides: dnf-plugin-universal-hooks
 This plugin allows us to drop scripts into certain paths in order to run arbitrary actions during any slot dnf or yum supports. It can be for all packages or, if the slot involves a transaction with packages involved, for specific packages or packages that match a certain wildcard patterns.
 
 %install
+set -x
+
 rm -rf %{buildroot}
+
 %if 0%{?rhel} >= 8
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/dnf/plugins
 mkdir -p $RPM_BUILD_ROOT%{dnf_pluginslib}/__pycache__/
@@ -50,7 +58,7 @@ install -m 755 %_sourcedir/universal-hooks-YUM.py $RPM_BUILD_ROOT%{yum_pluginsli
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/yum/universal-hooks
 %endif
 
-%if 0%{?rhel} == 9
+%if 0%{?rhel} >= 9
 sed -i "1s:/usr/bin/python3\.6:/usr/bin/python3:" $RPM_BUILD_ROOT%{dnf_pluginslib}/universal_hooks.py
 %endif
 
@@ -66,7 +74,14 @@ rm -rf %{buildroot}
 %if 0%{?rhel} == 9
 %{dnf_pluginslib}__pycache__/universal_hooks.cpython-39.opt-1.pyc
 %{dnf_pluginslib}__pycache__/universal_hooks.cpython-39.pyc
-%else
+%endif
+
+%if 0%{?rhel} >= 10
+%{dnf_pluginslib}__pycache__/universal_hooks.cpython-312.opt-1.pyc
+%{dnf_pluginslib}__pycache__/universal_hooks.cpython-312.pyc
+%endif
+
+%if 0%{?rhel} < 9
 %{dnf_pluginslib}__pycache__/universal_hooks.cpython-36.opt-1.pyc
 %{dnf_pluginslib}__pycache__/universal_hooks.cpython-36.pyc
 %endif
