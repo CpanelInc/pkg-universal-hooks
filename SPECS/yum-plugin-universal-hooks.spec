@@ -1,7 +1,7 @@
 Name: yum-plugin-universal-hooks
 Version: 0.1
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4598 for more details
-%define release_prefix 13
+%define release_prefix 14
 Release: %{release_prefix}%{?dist}.cpanel
 Summary: Yum plugin to run arbitrary commands at any slot. For slots involving package transactions it can be limited to a specific name or glob.
 
@@ -10,16 +10,18 @@ License: BSD 2-Clause
 Vendor: cPanel, Inc.
 Requires: yum-utils
 
+%if 0%{?rhel} >= 8
+Provides: dnf-plugin-universal-hooks
+%endif
+
 %if 0%{?rhel} == 8
 BuildRequires: python36 dnf python3-dnf python3-libdnf
 Requires: python36 dnf python3-dnf python3-libdnf
-Provides: dnf-plugin-universal-hooks
 %endif
 
 %if 0%{?rhel} == 9
 BuildRequires: python3 dnf python3-dnf python3-libdnf
 Requires: python3 dnf python3-dnf python3-libdnf
-Provides: dnf-plugin-universal-hooks
 %endif
 
 %define yum_pluginslib  /usr/lib/yum-plugins
@@ -98,6 +100,9 @@ rm -rf %{buildroot}
 %endif
 
 %changelog
+* Mon Aug 11 2025 Dan Muey <daniel.muey@webpros.com> - 0.1-14
+- CPANEL-48519: Make `dnf-plugin-universal-hooks` work for Alma 10 and beyond
+
 * Thu Sep 29 2022 Julian Brown <julian.brown@cpanel.net> - 0.1-13
 - ZC-10009: Add changes so that it builds on AlmaLinux 9
 
@@ -112,7 +117,7 @@ rm -rf %{buildroot}
 
 * Fri Sep 16 2016 Darren Mobley <darren@cpanel.net> - 0.1-9
 - HB-1952: Added support for sending an argument of --pkglist=/path/to/file
-  that has a line by line list of each rpm package being handled by the 
+  that has a line by line list of each rpm package being handled by the
   current operation to the wildcard scripts
 
 * Mon Jun 20 2016 Dan Muey <dan@cpanel.net> - 0.1-8
