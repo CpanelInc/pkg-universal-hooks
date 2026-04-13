@@ -71,7 +71,12 @@ if ( -e $txpath ) {
     open( my $txn_fh, "<", $txpath ) or die "Could not open for read “$txpath”: $!\n";
     while ( my $pkg = <$txn_fh> ) {
         chomp $pkg;
-        push @pkgs, $pkg;
+
+        # The following regular expression strictly matches valid package names as defined by the Debian Policy
+        # Will prevent ../../evil traversal but allow various actual pkg names
+        if ( $pkg =~ m/^[a-z0-9][a-z0-9+.-]+$/ ) {
+            push @pkgs, $pkg;
+        }
     }
     close $txn_fh;
 
