@@ -1,2 +1,13 @@
+# Committed on purpose: unlike most packages, this list can not be generated (EA4-303).
+#
+# debify normally generates a deb's .install from the RPM's file list, but this deb
+# ships different files than the RPM: the RPM is a dnf plugin (universal_hooks.py,
+# /etc/dnf/plugins/universal_hooks.conf, …) while the deb is an apt hook
+# (apt-universal-hooks.conf and apt-universal-hooks.pl). The deb's files are not in
+# the RPM, so no RPM file list (or `et obs --file-list-changed`) can produce them;
+# this file is the only source for them.
+#
+# debify uses it as-is and never checks it, so keep it in sync by hand with what
+# override_dh_auto_install.sh / SOURCES provide for the deb. See ea-tools docs/debify.md.
 apt-universal-hooks.conf /etc/apt/apt.conf.d
 apt-universal-hooks.pl /etc/apt/universal-hooks
